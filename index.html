@@ -956,7 +956,7 @@ a, button, [role="button"], input, textarea, select {
      =========================== -->
 <div class="app-container">
 
-  <div class="screen active" id="screen-login">
+  <div class="screen" id="screen-login" style="display:none!important">
     <!-- Logo -->
     <div class="app-logo">
       <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-label="Batch Push Logger logo">
@@ -1010,7 +1010,7 @@ a, button, [role="button"], input, textarea, select {
   <!-- ===========================
        SCREEN 2: MAIN SCREEN
        =========================== -->
-  <div class="screen" id="screen-main">
+  <div class="screen active" id="screen-main">
     <div class="app-logo">
       <svg width="36" height="36" viewBox="0 0 48 48" fill="none" aria-label="Batch Push Logger logo">
         <path d="M18 12V8h12v4l5 18v4a4 4 0 01-4 4H17a4 4 0 01-4-4v-4L18 12z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
@@ -1296,12 +1296,8 @@ function handleLogin() {
 }
 
 function handleLogout() {
-  stopClock();
-  state.currentOperator = null;
-  state.currentCode = null;
-  showScreen('screen-login');
-  document.getElementById('operator-code').focus();
-}
+    window.location.href = 'https://kmjz-master-hub.vercel.app';
+  }
 
 /* ===========================
    LOG BATCH PUSH
@@ -1520,6 +1516,34 @@ document.getElementById('modal-late').addEventListener('click', function(e) {
 
 // Auto-focus login input
 document.getElementById('operator-code').focus();
+</script>
+
+<script>
+// === AUTO-SET OPERATOR FROM LOCALSTORAGE (no code wall) ===
+(function() {
+  var name = null;
+  try { name = localStorage.getItem('kmjz_operator_name'); } catch(e) {}
+  if (name && typeof state !== 'undefined' && state) {
+    state.currentOperator = name;
+    if (typeof state.currentCode !== 'undefined') {
+      try { state.currentCode = localStorage.getItem('kmjz_operator_code') || ''; } catch(e) {}
+    }
+  } else if (name) {
+    if (typeof currentOperator !== 'undefined') {
+      currentOperator = name;
+    }
+    window._autoOperator = name;
+  }
+  // Update operator badge if exists
+  var badge = document.getElementById('operatorName') || document.getElementById('operatorBadge');
+  if (badge && name) badge.textContent = name;
+  // Update any operator display elements
+  document.querySelectorAll('[id*="perator"]').forEach(function(el) {
+    if (el.tagName === 'SPAN' && el.id.toLowerCase().includes('name') && name) {
+      el.textContent = name;
+    }
+  });
+})();
 </script>
 </body>
 </html>
