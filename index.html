@@ -982,21 +982,34 @@ a, button, [role="button"], input, textarea, select {
     <div class="glass-card">
       <div class="card-body">
         <div class="form-group" style="gap: var(--space-4);">
-          <label class="form-label" for="operator-code" style="text-align: center;">Enter Your Operator Code</label>
-          <input
-            type="text"
-            id="operator-code"
-            class="form-input"
-            placeholder="e.g., QL01"
-            maxlength="4"
-            autocomplete="off"
-            autocapitalize="characters"
-            spellcheck="false"
-          >
-          <div class="error-msg" id="login-error">Invalid operator code</div>
+          <label class="form-label" for="operatorSelect" style="text-align: center;">Select Your Name</label>
+          <select id="operatorSelect" class="form-input" style="width:100%; padding:12px 16px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:inherit; font-size:1rem; outline:none; appearance:none; -webkit-appearance:none; cursor:pointer; background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22currentColor%22 stroke-width=%222.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><polyline points=%225 9 12 15 19 9%22/></svg>'); background-repeat:no-repeat; background-position:right 16px center;">
+              <option value="" disabled selected>— Select your name —</option>
+              <option value="Arturo">Arturo</option>
+              <option value="Bobby">Bobby</option>
+              <option value="Cris">Cris</option>
+              <option value="Dylan S">Dylan S</option>
+              <option value="Eli">Eli</option>
+              <option value="FernDawg">FernDawg</option>
+              <option value="Frank">Frank</option>
+              <option value="George">George</option>
+              <option value="George T">George T</option>
+              <option value="JDub">JDub</option>
+              <option value="JJ">JJ</option>
+              <option value="Jaime D">Jaime D</option>
+              <option value="Jaime P">Jaime P</option>
+              <option value="Jeremy">Jeremy</option>
+              <option value="Josh">Josh</option>
+              <option value="KD">KD</option>
+              <option value="Laker">Laker</option>
+              <option value="Moh">Moh</option>
+              <option value="Q">Q</option>
+              <option value="Quentin">Quentin</option>
+              <option value="Sly">Sly</option>
+              <option value="Zee">Zee</option>
+          </select>
           <button class="btn btn-primary btn-big" id="login-btn" type="button">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-            Login
+            Continue
           </button>
         </div>
       </div>
@@ -1155,12 +1168,6 @@ a, button, [role="button"], input, textarea, select {
    APP STATE & DATA
    =========================== */
 
-var OPERATORS = {
-  'QL01': 'Quinton L',
-  'JR01': 'Jaime R',
-  'JL01': 'James L',
-  'JD01': 'Jaime D'
-};
 
 var state = {
   currentOperator: null,
@@ -1267,32 +1274,20 @@ function stopClock() {
    LOGIN
    =========================== */
 
-function handleLogin() {
-  var input = document.getElementById('operator-code');
-  var errorEl = document.getElementById('login-error');
-  var code = input.value.trim().toUpperCase();
+function handleDropdownLogin() {
+  var select = document.getElementById('operatorSelect');
+  var name = select.value;
+  if (!name) return;
 
-  if (OPERATORS[code]) {
-    errorEl.classList.remove('visible');
-    state.currentOperator = OPERATORS[code];
-    state.currentCode = code;
+  state.currentOperator = name;
+  localStorage.setItem('kmjz_operator_name', name);
 
-    // Update main screen
-    document.getElementById('operator-name-display').textContent = state.currentOperator;
-    document.getElementById('operator-initials').textContent = getInitials(state.currentOperator);
+  document.getElementById('operator-name-display').textContent = name;
+  document.getElementById('operator-initials').textContent = getInitials(name);
 
-    showScreen('screen-main');
-    startClock();
-    renderLogTable();
-    input.value = '';
-  } else {
-    errorEl.classList.remove('visible');
-    // Force reflow to restart animation
-    void errorEl.offsetWidth;
-    errorEl.classList.add('visible');
-    input.value = '';
-    input.focus();
-  }
+  showScreen('screen-main');
+  startClock();
+  renderLogTable();
 }
 
 function handleLogout() {
@@ -1469,10 +1464,7 @@ function renderLogTable() {
    =========================== */
 
 // Login
-document.getElementById('login-btn').addEventListener('click', handleLogin);
-document.getElementById('operator-code').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') handleLogin();
-});
+document.getElementById('login-btn').addEventListener('click', handleDropdownLogin);
 
 // Logout
 document.getElementById('logout-btn').addEventListener('click', handleLogout);
@@ -1514,8 +1506,6 @@ document.getElementById('modal-late').addEventListener('click', function(e) {
   }
 })();
 
-// Auto-focus login input
-document.getElementById('operator-code').focus();
 </script>
 
 <script>
